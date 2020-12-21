@@ -245,6 +245,7 @@ public class StopwatchMain extends JavaPlugin {
             //server is running 1.9.4 so we need to use the 1.9 R2 NMS class
             actionbar = new Actionbar_1_9_R2();
         } else  {
+            
             //  we are running 1.10+ where you can use ChatMessageType
             actionbar = new ActionbarModern();
         }
