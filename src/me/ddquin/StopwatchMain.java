@@ -227,7 +227,9 @@ public class StopwatchMain extends JavaPlugin {
             return false;
         }
         getLogger().info("Your server is running version " + version);
-        if (version.equals("v1_8_R1")) {
+        if (version.equals("v1_7_R4")) {
+
+        } else if (version.equals("v1_8_R1")) {
             //server is running 1.8-1.8.1 so we need to use the 1.8 R1 NMS class
             actionbar = new Actionbar_1_8_R1();
         } else if (version.equals("v1_8_R2")) {
@@ -242,7 +244,7 @@ public class StopwatchMain extends JavaPlugin {
         } else if (version.equals("v1_9_R2")) {
             //server is running 1.9.4 so we need to use the 1.9 R2 NMS class
             actionbar = new Actionbar_1_9_R2();
-        } else if (version.equals("v1_10_R1") || version.equals("v1_11_R1") || version.equals("v1_12_R1") || version.equals("v1_13_R1") || version.equals("v1_13_R2") || version.equals("v1_14_R1") || version.equals("v1_15_R1") || version.equals("v1_16_R1")) {
+        } else  {
             //  we are running 1.10+ where you can use ChatMessageType
             actionbar = new ActionbarModern();
         }
