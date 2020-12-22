@@ -26,6 +26,10 @@ public class StopwatchCommands implements CommandExecutor {
                 stopwatchMain.startStopwatch();
             } else if (args[0].equalsIgnoreCase("pause")) {
                 stopwatchMain.pauseStopwatch(s);
+            }  else if (args[0].equalsIgnoreCase("show")) {
+                stopwatchMain.showStopwatch(s, args);
+            }  else if (args[0].equalsIgnoreCase("showall")) {
+                stopwatchMain.showAllStopwatch(s);
             } else if (args[0].equalsIgnoreCase("help")) {
                 stopwatchMain.showHelp(s);
             } else if (args[0].equalsIgnoreCase("item")) {
