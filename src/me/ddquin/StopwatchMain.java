@@ -15,6 +15,7 @@ import org.apache.commons.lang.time.StopWatch;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.UUID;
 
 public class StopwatchMain extends JavaPlugin {
 
@@ -26,6 +27,7 @@ public class StopwatchMain extends JavaPlugin {
     private int offsetSec;
     private int endSec = Integer.MAX_VALUE;
     private Actionbar actionbar;
+    private UUID curPlayer;
 
     @Override
     public void onEnable() {
@@ -44,6 +46,7 @@ public class StopwatchMain extends JavaPlugin {
         stopWatch = new StopWatch();
 
         isRunning = false;
+        curPlayer = null;
         isPaused = false;
         getCommand("stopwatch").setExecutor(new StopwatchCommands(this));
         Bukkit.getPluginManager().registerEvents(new ItemListener(this), this);
@@ -60,7 +63,15 @@ public class StopwatchMain extends JavaPlugin {
                     String time = String.format("%01d:%02d", minutes, seconds);
                     String timerMessage = Util.replace(timeMessage, time);
                     //System.out.println(timerMessage);
-                    Bukkit.getOnlinePlayers().forEach(p -> actionbar.sendActionbar(p, timerMessage));
+                    if (curPlayer != null) {
+                        if (Bukkit.getOfflinePlayer(curPlayer).isOnline()) {
+                            actionbar.sendActionbar(Bukkit.getPlayer(curPlayer), timerMessage);
+                        } else {
+                            Bukkit.getOnlinePlayers().forEach(p -> actionbar.sendActionbar(p, timerMessage));
+                        }
+                    } else {
+                        Bukkit.getOnlinePlayers().forEach(p -> actionbar.sendActionbar(p, timerMessage));
+                    }
                     if (totalSecs >= endSec) {
                         stopStopwatch(Bukkit.getConsoleSender());
                     }
@@ -77,6 +88,8 @@ public class StopwatchMain extends JavaPlugin {
         s.sendMessage(ChatColor.GREEN + "/st pause will either pause or unpause the timer\n" +
                 "/st start will start the timer and restart if already started\n" +
                 "/st stop will stop the timer\n" +
+                "/st showall will show the timer message to everyone (default)\n" +
+                "/st show [player] will show the timer to the chosen player to show all do st showall\n" +
                 "/st item will give you items to use the 3 time control commands\n" +
                 "/st message [message] will set the message of the time, make sure to include {0} in it which represents time\n" +
                 "/st offset [seconds] will add to the offset seconds by the amount given until next stopwatch reset\n" +
@@ -91,6 +104,26 @@ public class StopwatchMain extends JavaPlugin {
         stopWatch.start();
         isRunning = true;
         isPaused = false;
+    }
+
+    public void showAllStopwatch(CommandSender s) {
+        curPlayer = null;
+        s.sendMessage(ChatColor.GREEN + "Timer message is now showing to all players!");
+    }
+
+    public void showStopwatch(CommandSender s, String[] args) {
+        if (args.length == 1) {
+            s.sendMessage(ChatColor.RED + "Specify a player, like this /st show [playername]");
+            return;
+        }
+        String playername = args[1];
+        Player player = Bukkit.getPlayer(playername);
+        if (player == null) {
+            s.sendMessage(ChatColor.RED + "Unknown player.");
+            return;
+        }
+        curPlayer = player.getUniqueId();
+        s.sendMessage(ChatColor.GREEN + "Timer is now showing to " + player.getName());
     }
 
     public void stopStopwatch(CommandSender s) {
