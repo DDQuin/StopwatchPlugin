@@ -65,12 +65,22 @@ public class StopwatchMain extends JavaPlugin {
                     //System.out.println(timerMessage);
                     if (curPlayer != null) {
                         if (Bukkit.getOfflinePlayer(curPlayer).isOnline()) {
-                            actionbar.sendActionbar(Bukkit.getPlayer(curPlayer), timerMessage);
+                            if (Bukkit.getPlayer(curPlayer).hasPermission("stopwatch.default")) {
+                                actionbar.sendActionbar(Bukkit.getPlayer(curPlayer), timerMessage);
+                            }
                         } else {
-                            Bukkit.getOnlinePlayers().forEach(p -> actionbar.sendActionbar(p, timerMessage));
+                            for (Player p : Bukkit.getOnlinePlayers()) {
+                                if (p.hasPermission("stopwatch.default")) {
+                                    actionbar.sendActionbar(p, timerMessage);
+                                }
+                            }
                         }
                     } else {
-                        Bukkit.getOnlinePlayers().forEach(p -> actionbar.sendActionbar(p, timerMessage));
+                        for (Player p : Bukkit.getOnlinePlayers()) {
+                            if (p.hasPermission("stopwatch.default")) {
+                                actionbar.sendActionbar(p, timerMessage);
+                            }
+                        }
                     }
                     if (totalSecs >= endSec) {
                         stopStopwatch(Bukkit.getConsoleSender());
