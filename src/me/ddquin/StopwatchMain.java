@@ -57,10 +57,15 @@ public class StopwatchMain extends JavaPlugin {
                 if (isRunning) {
 
                     int totalSecs = (int) (stopWatch.getTime()/1000.0) + offsetSec;
-
-                    int  minutes = (int)((totalSecs % 3600) / 60);
+                    int hours = (int)(totalSecs/3600);
+                    int minutes = (int)((totalSecs % 3600) / 60);
                     int seconds = totalSecs % 60;
-                    String time = String.format("%01d:%02d", minutes, seconds);
+                    String time;
+                    if (hours > 0) {
+                        time = String.format("%01d:%02d:%02d", hours, minutes, seconds);
+                    } else {
+                        time = String.format("%01d:%02d", minutes, seconds);
+                    }
                     String timerMessage = Util.replace(timeMessage, time);
                     //System.out.println(timerMessage);
                     if (curPlayer != null) {
@@ -135,6 +140,8 @@ public class StopwatchMain extends JavaPlugin {
         curPlayer = player.getUniqueId();
         s.sendMessage(ChatColor.GREEN + "Timer is now showing to " + player.getName());
     }
+
+
 
     public void stopStopwatch(CommandSender s) {
         if (!isRunning) {
