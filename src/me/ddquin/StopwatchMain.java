@@ -24,6 +24,8 @@ public class StopwatchMain extends JavaPlugin {
     private File configFile;
     private YamlConfiguration config;
     private String timeMessage;
+
+    private boolean useMilli;
     private int offsetSec;
     private int endSec = Integer.MAX_VALUE;
     private Actionbar actionbar;
@@ -42,7 +44,13 @@ public class StopwatchMain extends JavaPlugin {
             this.config.set("timerMessage", "&6{0}");
             this.save();
         }
+        if (!this.config.isSet("useMilli")) {
+            this.config.set("useMilli", true);
+            this.save();
+        }
         timeMessage = this.config.getString("timerMessage");
+
+        useMilli = this.config.getBoolean("useMilli");
         stopWatch = new StopWatch();
 
         isRunning = false;
@@ -56,15 +64,25 @@ public class StopwatchMain extends JavaPlugin {
             public void run() {
                 if (isRunning) {
 
+                    long milliseconds = (stopWatch.getTime() % 1000);
+                    int two_digit_ms = (int) (milliseconds/10);
                     int totalSecs = (int) (stopWatch.getTime()/1000.0) + offsetSec;
                     int hours = (int)(totalSecs/3600);
                     int minutes = (int)((totalSecs % 3600) / 60);
                     int seconds = totalSecs % 60;
                     String time;
                     if (hours > 0) {
-                        time = String.format("%01d:%02d:%02d", hours, minutes, seconds);
+                        if (useMilli) {
+                            time = String.format("%01d:%02d:%02d:%02d", hours, minutes, seconds, two_digit_ms);
+                        } else {
+                            time = String.format("%01d:%02d:%02d", hours, minutes, seconds);
+                        }
                     } else {
-                        time = String.format("%01d:%02d", minutes, seconds);
+                        if (useMilli)  {
+                            time = String.format("%01d:%02d:%02d", minutes, seconds, two_digit_ms);
+                        } else {
+                            time = String.format("%01d:%02d", minutes, seconds);
+                        }
                     }
                     String timerMessage = Util.replace(timeMessage, time);
                     //System.out.println(timerMessage);
@@ -108,7 +126,8 @@ public class StopwatchMain extends JavaPlugin {
                 "/st item will give you items to use the 3 time control commands\n" +
                 "/st message [message] will set the message of the time, make sure to include {0} in it which represents time\n" +
                 "/st offset [seconds] will add to the offset seconds by the amount given until next stopwatch reset\n" +
-                "/st endsec [seconds] will set the end seconds to the amount given so that the timer will stop at that time, must be set after every reset");
+                "/st endsec [seconds] will set the end seconds to the amount given so that the timer will stop at that time, must be set after every reset\n" +
+                "/st togglems toggles the showing of milliseconds, on by default");
     }
 
     public void startStopwatch() {
@@ -236,6 +255,13 @@ public class StopwatchMain extends JavaPlugin {
         }
     }
 
+    public void toggleMs(CommandSender s, String[] args) {
+        useMilli = !useMilli;
+        this.config.set("useMilli", useMilli);
+        s.sendMessage(ChatColor.GREEN + "useMilli has been set to " + useMilli);
+        this.save();
+    }
+
     //Config methods
 
     public void reload() {
@@ -295,7 +321,7 @@ public class StopwatchMain extends JavaPlugin {
             //server is running 1.9.4 so we need to use the 1.9 R2 NMS class
             actionbar = new Actionbar_1_9_R2();
         } else  {
-            
+
             //  we are running 1.10+ where you can use ChatMessageType
             actionbar = new ActionbarModern();
         }

@@ -40,9 +40,11 @@ public class StopwatchCommands implements CommandExecutor {
                 stopwatchMain.setMessage(s, args);
             } else if (args[0].equalsIgnoreCase("endsec")) {
                 stopwatchMain.setEndSec(s, args);
+            } else if (args[0].equalsIgnoreCase("togglems")) {
+                stopwatchMain.toggleMs(s, args);
             }
         } else {
-            s.sendMessage(ChatColor.RED + "Do /[stopwatch|st] pause/stop/start/help/item/message/offset/endsec");
+            s.sendMessage(ChatColor.RED + "Do /[stopwatch|st] pause/stop/start/help/item/message/offset/endsec/togglems");
         }
         return false;
     }
